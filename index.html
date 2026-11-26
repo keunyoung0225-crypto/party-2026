@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026 전략사업실 연말 어워즈 & 송년회</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Pretendard & Noto Serif KR Fonts -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Pretendard"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+            serif: ['"Noto Serif KR"', 'serif'],
+          },
+          colors: {
+            champagne: {
+              light: '#FFF3C4',
+              DEFAULT: '#F3D078',
+              dark: '#D4AF37',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at 12% 15%, #381124 0%, #141830 48%, #080b16 100%);
+      color: #FDFBF7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 은은한 보케/글로우 효과 */
+    .bokeh-1 {
+      position: fixed;
+      top: -12%;
+      left: -8%;
+      width: 48vw;
+      height: 48vw;
+      background: radial-gradient(circle, rgba(243, 208, 120, 0.14) 0%, rgba(243, 208, 120, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bokeh-2 {
+      position: fixed;
+      bottom: -15%;
+      right: -8%;
+      width: 52vw;
+      height: 52vw;
+      background: radial-gradient(circle, rgba(225, 29, 72, 0.13) 0%, rgba(225, 29, 72, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 글래스모피즘 카드 */
+    .glass-card {
+      background: linear-gradient(145deg, rgba(28, 34, 60, 0.76) 0%, rgba(16, 20, 38, 0.88) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(243, 208, 120, 0.2);
+      box-shadow: 0 12px 32px -6px rgba(0, 0, 0, 0.5);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(243, 208, 120, 0.52);
+      box-shadow: 0 18px 40px -6px rgba(243, 208, 120, 0.16);
+    }
+
+    /* 샴페인 골드 그라데이션 텍스트 */
+    .text-gold-gradient {
+      background: linear-gradient(135deg, #FFF7D6 0%, #F3D078 45%, #D4AF37 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* 둥실둥실 애니메이션 */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(2deg); }
+    }
+    .animate-float {
+      animation: floatSlow 3.8s ease-in-out infinite;
+    }
+
+    /* 커스텀 스크롤바 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d1a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(243, 208, 120, 0.35);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(243, 208, 120, 0.6);
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-amber-400 selection:text-slate-950">
+  <!-- 골드 보케/반짝이 배경 -->
+  <canvas id="sparkleCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+  <div class="bokeh-1"></div>
+  <div class="bokeh-2"></div>
+
+  <!-- 토스트 알림 -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- 메인 컨테이너 -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+    
+    <!-- 1. 상단 히어로 배너 -->
+    <header class="pt-8 pb-7 border-b border-amber-200/15">
+      <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6">
+        <div class="space-y-3">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/15 border border-amber-300/35 text-amber-200 text-xs sm:text-sm font-semibold tracking-wide">
+            <i class="fa-solid fa-champagne-glasses text-amber-300"></i>
+            <span>2026 GYEONGGI CO., LTD. • 전략사업실 연말 송년회</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-gold-gradient leading-tight">
+            2026 전략사업실 연말 어워즈 & 송년회
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-base lg:text-lg font-medium">
+            경기도주식회사 전략사업실 · 함께 빛난 2026년, 그리고 새로운 시작을 응원하며 🥂
+          </p>
+        </div>
+
+        <!-- 우측 상단 컨트롤 버튼 -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button onclick="triggerCelebration()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500/25 to-rose-500/25 hover:from-amber-500/35 hover:to-rose-500/35 border border-amber-300/40 text-amber-200 text-xs sm:text-sm font-bold flex items-center gap-2 transition active:scale-95 shadow-md">
+            <span>🎉</span>
+            <span>축포 터뜨리기</span>
+          </button>
+
+          <button onclick="openSlideShow()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs sm:text-sm font-extrabold flex items-center gap-2 transition active:scale-95 shadow-lg shadow-amber-500/20">
+            <span>📽️</span>
+            <span>회식 발표 모드(슬라이드)</span>
+          </button>
+
+          <button id="globalAnonBtn" onclick="toggleAnonymousMode()" class="px-4 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-amber-200/25 text-amber-100 text-xs sm:text-sm font-bold flex items-center gap-2 transition active:scale-95">
+            <span>🕵️</span>
+            <span id="globalAnonText">익명 보기: OFF</span>
+          </button>
+
+          <button onclick="openDataModal()" class="px-4 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-white/15 text-slate-200 text-xs sm:text-sm font-bold flex items-center gap-2 transition active:scale-95">
+            <span>✏️</span>
+            <span>데이터 수정/추가</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 핵심 요약 지표 배지 4개 -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mt-7">
+        <div onclick="switchTab('table')" class="glass-card rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 cursor-pointer">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-amber-400/20 border border-amber-300/35 flex items-center justify-center text-xl sm:text-2xl shrink-0">👥</div>
+          <div>
+            <div class="text-xs text-slate-400 font-medium">설문 참여 인원</div>
+            <div id="kpiTotalCount" class="text-xl sm:text-2xl font-black text-white mt-0.5">11명</div>
+          </div>
+        </div>
+
+        <div onclick="switchTab('best')" class="glass-card rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 cursor-pointer border-amber-300/45 bg-gradient-to-br from-amber-500/15 to-slate-900/80">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-amber-400/25 border border-amber-300/50 flex items-center justify-center text-xl sm:text-2xl shrink-0 animate-float">👑</div>
+          <div class="min-w-0">
+            <div class="text-xs text-amber-300 font-bold">2026 베스트 직원 압도적 1위</div>
+            <div id="kpiBestWinner" class="text-lg sm:text-2xl font-black text-gold-gradient truncate mt-0.5">이석우 (7표)</div>
+          </div>
+        </div>
+
+        <div onclick="switchTab('fromDirector')" class="glass-card rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 cursor-pointer">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-rose-500/20 border border-rose-400/35 flex items-center justify-center text-xl sm:text-2xl shrink-0">🎙️</div>
+          <div class="min-w-0">
+            <div class="text-xs text-slate-400 font-medium">이상훈 실장님 한마디</div>
+            <div class="text-sm sm:text-base font-extrabold text-rose-200 truncate mt-0.5">"니네들은 역시 최고야!!"</div>
+          </div>
+        </div>
+
+        <div onclick="switchTab('toSeokwoo')" class="glass-card rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 cursor-pointer">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/35 flex items-center justify-center text-xl sm:text-2xl shrink-0">💐</div>
+          <div>
+            <div class="text-xs text-slate-400 font-medium">석우대리 롤링페이퍼</div>
+            <div id="kpiSeokwooCount" class="text-xl sm:text-2xl font-black text-white mt-0.5">11개</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. 카테고리 탭 내비게이션 -->
+    <nav class="sticky top-3 z-30 my-6 p-1.5 rounded-2xl bg-slate-950/85 backdrop-blur-xl border border-amber-200/25 shadow-2xl overflow-x-auto">
+      <div class="flex items-center gap-1.5 min-w-max">
+        <button data-tab="overview" onclick="switchTab('overview')" class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all">
+          <span>🏆</span>
+          <span>한눈에 보기 (전체 대시보드)</span>
+        </button>
+        <button data-tab="best" onclick="switchTab('best')" class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all">
+          <span>👑</span>
+          <span>2026 베스트 직원 어워즈</span>
+        </button>
+        <button data-tab="toDirector" onclick="switchTab('toDirector')" class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all">
+          <span>💌</span>
+          <span>실장님께 하고 싶은 말 (소감)</span>
+        </button>
+        <button data-tab="fromDirector" onclick="switchTab('fromDirector')" class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all">
+          <span>🎙️</span>
+          <span>실장님이 직원들에게</span>
+        </button>
+        <button data-tab="toSeokwoo" onclick="switchTab('toSeokwoo')" class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all">
+          <span>💐</span>
+          <span>수고한 석우 대리에게 (롤링페이퍼)</span>
+        </button>
+        <button data-tab="table" onclick="switchTab('table')" class="tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all">
+          <span>📋</span>
+          <span>전체 응답 테이블/검색</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- 3. 메인 콘텐츠 영역 -->
+    <main id="mainContent" class="space-y-8"></main>
+
+  </div>
+
+  <!-- =====================================================================
+       모달 1: 스포트라이트 상세 모달 (카드 클릭 시 대형 스크린 낭독용 확대)
+  ====================================================================== -->
+  <div id="spotlightModal" onclick="if(event.target===this) closeSpotlight()" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md">
+    <div class="relative w-full max-w-3xl rounded-3xl bg-gradient-to-br from-[#1f2644] via-[#161a30] to-[#2e1222] border-2 border-amber-300/45 p-6 sm:p-10 shadow-2xl">
+      <button onclick="closeSpotlight()" class="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-200 transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div id="spotlightBadge" class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-200 text-xs sm:text-sm font-bold mb-4">
+        카테고리
+      </div>
+
+      <h3 id="spotlightTitle" class="text-xl sm:text-3xl font-black text-gold-gradient mb-5 leading-snug">
+        제목
+      </h3>
+
+      <div class="p-6 sm:p-8 rounded-2xl bg-black/35 border border-white/10 mb-6 max-h-[52vh] overflow-y-auto">
+        <p id="spotlightBody" class="text-lg sm:text-2xl text-slate-100 font-medium leading-relaxed whitespace-pre-line">
+          본문 내용
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-400 to-rose-400 flex items-center justify-center text-slate-950 font-black text-base shadow-md">
+            <i class="fa-solid fa-feather-pointed"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-400">작성자</div>
+            <div id="spotlightAuthor" class="text-base sm:text-lg font-extrabold text-amber-200">작성자</div>
+          </div>
+        </div>
+
+        <button onclick="clapFromSpotlight()" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-white font-extrabold text-sm sm:text-base flex items-center gap-2 shadow-lg transition active:scale-95">
+          <span>👏</span>
+          <span>박수 & 축하</span>
+          <span id="spotlightClapCount" class="px-2.5 py-0.5 rounded-full bg-black/25 text-xs">0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       모달 2: 회식 발표 모드 (전체화면 슬라이드쇼)
+  ====================================================================== -->
+  <div id="slideShowModal" class="fixed inset-0 z-50 hidden flex-col justify-between p-5 sm:p-10 bg-gradient-to-br from-[#080b16] via-[#141930] to-[#2c1020]">
+    <!-- 상단 바 -->
+    <div class="flex flex-wrap items-center justify-between gap-3 max-w-6xl w-full mx-auto">
+      <div class="flex items-center gap-3">
+        <span class="px-3.5 py-1.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-200 text-xs sm:text-sm font-extrabold">
+          📽️ 2026 전략사업실 연말 어워즈 발표 모드
+        </span>
+        <span id="slideCounter" class="text-amber-100/80 text-sm font-mono font-bold">1 / 25</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleAnonymousMode(); renderSlide();" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-amber-200 text-xs sm:text-sm font-bold transition">
+          🕵️ 익명 전환
+        </button>
+        <button onclick="closeSlideShow()" class="px-4 py-2 rounded-xl bg-rose-500/25 hover:bg-rose-500/40 border border-rose-300/30 text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition">
+          <i class="fa-solid fa-xmark"></i>
+          <span>발표 종료 (ESC)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 슬라이드 메인 스테이지 -->
+    <div id="slideStage" class="max-w-4xl w-full mx-auto my-auto py-4"></div>
+
+    <!-- 하단 컨트롤 바 -->
+    <div class="flex items-center justify-center gap-3 sm:gap-5 max-w-6xl w-full mx-auto">
+      <button onclick="prevSlide()" class="px-5 sm:px-7 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-white font-bold text-sm sm:text-base flex items-center gap-2 transition active:scale-95">
+        <i class="fa-solid fa-chevron-left"></i>
+        <span>이전 (←)</span>
+      </button>
+      <button onclick="triggerCelebration()" class="px-5 sm:px-7 py-3 rounded-2xl bg-amber-400/20 hover:bg-amber-400/30 border border-amber-300/45 text-amber-200 font-extrabold text-sm sm:text-base flex items-center gap-2 transition active:scale-95">
+        <span>🎉</span>
+        <span>축포 터뜨리기</span>
+      </button>
+      <button onclick="nextSlide()" class="px-5 sm:px-7 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-sm sm:text-base flex items-center gap-2 transition active:scale-95 shadow-lg">
+        <span>다음 (→)</span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       모달 3: 데이터 수정 / 추가 / 현장 실장님 말씀 입력 모달
+  ====================================================================== -->
+  <div id="dataModal" onclick="if(event.target===this) closeDataModal()" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+    <div class="relative w-full max-w-4xl rounded-3xl bg-[#13182c] border border-amber-200/35 shadow-2xl my-8 overflow-hidden">
+      <div class="px-6 py-5 bg-slate-900/95 border-b border-white/10 flex items-center justify-between">
+        <div>
+          <h3 class="text-lg sm:text-xl font-black text-gold-gradient flex items-center gap-2">
+            <span>✏️</span>
+            <span>설문 데이터 수정 및 현장 추가</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">회식 현장에서 내용을 수정하거나 새 응답을 추가할 수 있습니다. (자동 저장)</p>
+        </div>
+        <button onclick="closeDataModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- 모달 내부 탭 -->
+      <div class="flex flex-wrap border-b border-white/10 bg-slate-900/60 px-6 pt-3 gap-2">
+        <button onclick="switchModalTab('director')" id="mTab-director" class="m-tab-btn px-4 py-2 rounded-t-xl text-xs sm:text-sm font-extrabold bg-amber-400 text-slate-950">
+          🎙️ 실장님 한마디 현장 수정
+        </button>
+        <button onclick="switchModalTab('single')" id="mTab-single" class="m-tab-btn px-4 py-2 rounded-t-xl text-xs sm:text-sm font-bold text-slate-300 hover:bg-white/5">
+          ➕ 새 응답 추가하기
+        </button>
+        <button onclick="switchModalTab('list')" id="mTab-list" class="m-tab-btn px-4 py-2 rounded-t-xl text-xs sm:text-sm font-bold text-slate-300 hover:bg-white/5">
+          🗂️ 전체 응답 수정/삭제 (<span id="modalItemCount">11</span>)
+        </button>
+      </div>
+
+      <div class="p-6 max-h-[70vh] overflow-y-auto">
+        <!-- 1. 실장님 말씀 현장 수정 -->
+        <div id="directorEditPanel" class="space-y-4">
+          <div class="p-3.5 rounded-xl bg-amber-400/10 border border-amber-300/25 text-xs text-amber-200">
+            설문조사에서 이상훈 실장님이 남기신 <strong>"니네들은 역시 최고야!!"</strong> 외에 회식 현장에서 전하실 추가 멘트가 있다면 자유롭게 수정해 주세요!
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-amber-200 mb-1.5">4. 실장님이 직원들에게 남긴 한마디 (메인 문구)</label>
+            <input type="text" id="editDirectorQuote" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-white text-sm font-bold focus:border-amber-400 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-amber-200 mb-1.5">회식 현장 추가 덕담 / 건배사 (선택)</label>
+            <textarea id="editDirectorSubNote" rows="4" placeholder="실장님의 추가 인사말을 입력하면 스포트라이트 배너에 함께 표시됩니다." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-white text-sm leading-relaxed focus:border-amber-400 focus:outline-none"></textarea>
+          </div>
+          <div class="flex justify-end">
+            <button onclick="saveDirectorSpecial()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg">
+              실장님 한마디 저장하기
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. 새 응답 추가 폼 -->
+        <form id="singleEntryForm" onsubmit="handleAddSingleEntry(event)" class="hidden space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-amber-200 mb-1.5">1. 작성자 *</label>
+              <input type="text" id="inputAuthor" required placeholder="이름 입력" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-white text-sm focus:border-amber-400 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-amber-200 mb-1.5">2. 2026년 전략사업실에서의 베스트 직원은? *</label>
+              <input type="text" id="inputBestStaff" required placeholder="예: 이석우" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-white text-sm focus:border-amber-400 focus:outline-none" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-amber-200 mb-1.5">3. 실장님께 하고 싶은 말 *</label>
+            <textarea id="inputToDirector" rows="2" required placeholder="소감 및 실장님께 한마디" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-white text-sm focus:border-amber-400 focus:outline-none"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-amber-200 mb-1.5">4. 실장님은 직원들에게 한마디 남겨주세요!! (해당 시 입력)</label>
+            <input type="text" id="inputFromDirector" placeholder="공란 가능" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-white text-sm focus:border-amber-400 focus:outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-amber-200 mb-1.5">5. 그동안 수고한 석우 대리에게 한마디 남겨주세요!! *</label>
+            <textarea id="inputToSeokwoo" rows="2" required placeholder="석우 대리에게 전하는 메시지" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-white text-sm focus:border-amber-400 focus:outline-none"></textarea>
+          </div>
+
+          <div class="pt-2 flex justify-end">
+            <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg">
+              응답 추가하기
+            </button>
+          </div>
+        </form>
+
+        <!-- 3. 전체 응답 관리 & 초기화 -->
+        <div id="listManagePanel" class="hidden space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-white/10">
+            <span class="text-xs text-slate-400">각 항목을 삭제하거나 첨부된 11명 원본 설문 데이터로 복구할 수 있습니다.</span>
+            <button onclick="resetToOriginalSurvey()" class="px-3.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/35 border border-rose-400/35 text-rose-200 text-xs font-bold transition">
+              <i class="fa-solid fa-rotate-left mr-1"></i>원본 설문 데이터(11명)로 리셋
+            </button>
+          </div>
+          <div id="manageListContainer" class="space-y-2.5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       JAVASCRIPT 애플리케이션 로직 (실제 11명 데이터 완벽 수록)
+  ====================================================================== -->
+  <script>
+    // 첨부된 실제 설문조사 결과 11명 데이터 (원문 100% 반영)
+    const INITIAL_SURVEY_DATA = [
+      {
+        id: 1,
+        author: "이주영",
+        bestStaff: "이석우",
+        toDirector: "내년도에도 잘 부탁드립니다...",
+        fromDirector: "",
+        toSeokwoo: "우리를 잊지말아요.. 세상은 좁으니 또 만날꺼라 생각할께요!!",
+        claps: 12
+      },
+      {
+        id: 2,
+        author: "이석우",
+        bestStaff: "이석우",
+        toDirector: "수고하셨습니다",
+        fromDirector: "",
+        toSeokwoo: "~",
+        claps: 19
+      },
+      {
+        id: 3,
+        author: "이상훈",
+        isDirector: true,
+        bestStaff: "모두 다~!!",
+        toDirector: "나도 나를 잘 몰라~",
+        fromDirector: "니네들은 역시 최고야!!",
+        toSeokwoo: "인생에서 제일 중요한건 너의 행복, 가족의 행복",
+        claps: 25
+      },
+      {
+        id: 4,
+        author: "박용수",
+        bestStaff: "이영서",
+        toDirector: "최고였습니다",
+        fromDirector: "-",
+        toSeokwoo: "당신은 최고였습니다. 다회용기의 푸른 피는 당신을 잊지 않을것입니다.",
+        claps: 15
+      },
+      {
+        id: 5,
+        author: "김채은",
+        bestStaff: "박용수",
+        toDirector: "실장님 새로 하신 머리가 정말 잘 어울리십니다 30대처럼 보이세요",
+        fromDirector: "",
+        toSeokwoo: "대리님 덕분에 금세 적응할 수 있었습니다 ㅜ 대리님 가신다는 게 실감이 안 나네요 빈자리가 크게 느껴질 것 같아요 출장 자주 다니시면서 쌓인 피로들 푹 쉬시고 컨디션 최상으로 회복하셨음 합니다!",
+        claps: 18
+      },
+      {
+        id: 6,
+        author: "이근영",
+        bestStaff: "이상훈",
+        toDirector: "건강하소서..",
+        fromDirector: "",
+        toSeokwoo: "묵묵히 일하며, 책임감있는 모습이 멋졌음!!",
+        claps: 14
+      },
+      {
+        id: 7,
+        author: "김진현",
+        bestStaff: "이석우",
+        toDirector: "올 한해를 쭉 함께하진 못했지만 절 잊지 말아주세요.. 곧 돌아갑니다!",
+        fromDirector: "",
+        toSeokwoo: "그동안 다회용기 함께해서 즐거웠고 많이 배웠습니다 사.. 사는 동안 행복하세요.. ㅋㅋㅋㅋ",
+        claps: 16
+      },
+      {
+        id: 8,
+        author: "이빛나",
+        bestStaff: "이석우",
+        toDirector: "인사발령으로 전략사업실에 오게 되었는데, 함께 일하는 분들이 좋아 즐겁고 편안한 마음으로 일할 수 있었습니다. 실장님과 다시 함께 일하게 되어 더욱 반가웠고요! 늘 편안 분위기를 만들어주시고, 업무를 추진할 때도 직원들의 입장을 먼저 생각해 주셔서 진심으로 감사드립니다. 😊",
+        fromDirector: "",
+        toSeokwoo: "석우 대리님과 앞으로 함께 일하지 못하게 되어 아쉬운 마음이 정말 큽니다 ㅠㅠㅠ 그동안 함께해 주셔서 감사했고, 앞으로 새로운 곳에서도 좋은 일만 가득하시길 진심으로 응원할게요 !! 그래도 제 안성 연락은 꼭 받아주셔야 합니다.. ㅎㅎ 😊",
+        claps: 21
+      },
+      {
+        id: 9,
+        author: "장선아",
+        bestStaff: "이주영",
+        toDirector: "실장님 1년 동안 많이 배웠습니다.",
+        fromDirector: "",
+        toSeokwoo: "늘 건강한 에너지 가득한 석우대리님! 좋은 시간 보내세요 ^^!!!",
+        claps: 13
+      },
+      {
+        id: 10,
+        author: "임수아",
+        bestStaff: "이석우",
+        toDirector: "한 해 동안 정말 수고 많으셨습니다! 조언해 주시고, 업무를 어떻게 해나가야 하는지, 상황을 어떻게 풀어나가야 하는지 옆에서 많이 배우고 느낄 수 있었습니다. 덕분에 한층 더 성장할 수 있었던 것 같습니다. 늘 건강 유의하시고, 앞으로도 좋은 일 가득하시길 바랍니다! 😊",
+        fromDirector: "",
+        toSeokwoo: "항상 특별한 날이 아니더라도 맛있는 것 사주시려고 하고, 이것저것 세심하게 챙겨주셔서 정말 감사했습니다ㅎㅎ 함께 출장 갔던 것도 좋은 추억으로 남아 있는데, 특히 바우덕이 축제라서 더 즐겁고 재미있었던 것 같아요! 덕분에 좋은 추억도 많이 만들었습니다. 나줌에 또 뵐 수 있는 날이 있었으면 좋겠습니다! 그동안 정말 수고 많으셨습니다!!",
+        claps: 22
+      },
+      {
+        id: 11,
+        author: "이영서",
+        bestStaff: "이석우",
+        toDirector: "경기도주식회사의 꽃 중의 꽃! 전략사업실은 정말 따뜻하면서도 모두가 열정 넘치는 최고의 실이라고 생각합니다. 전략사업실에서 특히 주임님, 대리님, 과장님, 실장님 모두 편안하고 즐겁게 얘기할 수 있는 분위기가 있다는 것이 저희 실의 최고의 장점이라고 생각이 듭니다. 전략사업실 분위기를 항상 긍정적으로 이끌어주시고 한 명 한 명 챙겨서 살펴주시는 실장님께 정말 감사하다고 느낍니다. 모두들 남은 연말 무사히, 그리고 행복하게 보내셨으면 좋겠습니다. 2027년에는 더더욱 활기차고 즐거운 일들이 가득한 전략사업실이 될 수 있도록 저도 노력하겠습니다! 부족했던 저에게 도움을 많이 주셔서 전략사업실 모든분들께 감사드립니다!",
+        fromDirector: "",
+        toSeokwoo: "항상 너털웃음을 지어주시는 대리님,,전략사업실에서 항상 수고해주시고 다회용기에서 정말 바쁜 세월 보내시느라 고생이 많으셨습니다. 감사하고 또 아쉽습니다. 항상 누구든지 따뜻하게 챙겨주시는 석우 대리님! 앞으로는 더더욱 편안하고 행복한 날을 보내셨으면 좋겠습니다..!! 그동안 대리님이 옆에 계셨던 시간들이 정말 즐거운 기억으로 남아서 잊지못할 것 같습니다.. 그동안 정말 감사했습니다 ! ㅎㅎ",
+        claps: 24
+      }
+    ];
+
+    const INITIAL_DIRECTOR_EXTRA = {
+      subNote: "올 한 해 각자의 자리에서 최선을 다해준 전략사업실 팀원 모두가 2026년의 진정한 주인공입니다. 오늘 밤은 맛있는 음식과 함께 마음껏 웃고 즐기는 행복한 송년회가 되길 바랍니다! 건배! 🥂"
+    };
+
+    // 상태 변수
+    let surveyData = [];
+    let directorExtra = {};
+    let currentTab = 'overview';
+    let isAnonymous = false;
+    let searchQuery = '';
+    let filterBestStaff = 'ALL';
+    let currentSpotlight = null;
+    let slides = [];
+    let currentSlideIdx = 0;
+
+    // 로컬스토리지 로드/저장
+    function loadState() {
+      const saved = localStorage.getItem('gg_strategy_2026_real_v1');
+      const savedDir = localStorage.getItem('gg_strategy_2026_dir_v1');
+      surveyData = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(INITIAL_SURVEY_DATA));
+      directorExtra = savedDir ? JSON.parse(savedDir) : JSON.parse(JSON.stringify(INITIAL_DIRECTOR_EXTRA));
+    }
+
+    function saveState() {
+      localStorage.setItem('gg_strategy_2026_real_v1', JSON.stringify(surveyData));
+      localStorage.setItem('gg_strategy_2026_dir_v1', JSON.stringify(directorExtra));
+      updateTopKPIs();
+    }
+
+    // 작성자 이름 표시 헬퍼 (익명 모드 대응)
+    function getDisplayAuthor(item, index) {
+      if (isAnonymous) {
+        return `익명의 팀원 #${index + 1}`;
+      }
+      return item.author === '이상훈' ? '이상훈 (실장님)' : item.author;
+    }
+
+    // 베스트 직원 투표 집계 로직 (이석우 단독 6표 + 실장님의 '모두 다~!!' 1표 포함 설명 제공)
+    function getBestStaffStats() {
+      const counts = {};
+      const votersMap = {};
+
+      surveyData.forEach((item, idx) => {
+        const pick = (item.bestStaff || '').trim();
+        if (!pick) return;
+        counts[pick] = (counts[pick] || 0) + 1;
+        if (!votersMap[pick]) votersMap[pick] = [];
+        votersMap[pick].push(isAnonymous ? `익명#${idx + 1}` : item.author);
+      });
+
+      const list = Object.keys(counts).map(name => ({
+        name,
+        directVotes: counts[name],
+        voters: votersMap[name]
+      }));
+
+      // 정렬: 득표수 내림차순
+      list.sort((a, b) => b.directVotes - a.directVotes);
+      return list;
+    }
+
+    // 상단 KPI 갱신
+    function updateTopKPIs() {
+      document.getElementById('kpiTotalCount').textContent = `${surveyData.length}명`;
+      const stats = getBestStaffStats();
+      const top = stats[0];
+      if (top) {
+        const hasAllVote = surveyData.some(d => d.bestStaff === '모두 다~!!');
+        const totalBadge = (top.name === '이석우' && hasAllVote) ? `${top.directVotes + 1}표` : `${top.directVotes}표`;
+        document.getElementById('kpiBestWinner').textContent = `${top.name} (${totalBadge})`;
+      }
+      const seokwooMsgs = surveyData.filter(d => d.toSeokwoo && d.toSeokwoo.trim() !== '').length;
+      document.getElementById('kpiSeokwooCount').textContent = `${seokwooMsgs}개`;
+    }
+
+    // 익명 모드 토글
+    function toggleAnonymousMode() {
+      isAnonymous = !isAnonymous;
+      const btnText = document.getElementById('globalAnonText');
+      const btn = document.getElementById('globalAnonBtn');
+      if (isAnonymous) {
+        btnText.textContent = '익명 보기: ON (비밀보장)';
+        btn.classList.add('border-amber-400', 'bg-amber-400/20', 'text-amber-200');
+      } else {
+        btnText.textContent = '익명 보기: OFF';
+        btn.classList.remove('border-amber-400', 'bg-amber-400/20', 'text-amber-200');
+      }
+      renderCurrentTab();
+      showToast(isAnonymous ? '🕵️ 비밀보장(익명) 모드가 켜졌습니다!' : '👤 작성자 실명 모드로 전환되었습니다.');
+    }
+
+    // 탭 전환
+    function switchTab(tabName) {
+      currentTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.dataset.tab === tabName) {
+          btn.classList.add('bg-gradient-to-r', 'from-amber-400', 'to-amber-500', 'text-slate-950', 'shadow-lg');
+          btn.classList.remove('text-slate-300', 'hover:bg-white/10');
+        } else {
+          btn.classList.remove('bg-gradient-to-r', 'from-amber-400', 'to-amber-500', 'text-slate-950', 'shadow-lg');
+          btn.classList.add('text-slate-300', 'hover:bg-white/10');
+        }
+      });
+      renderCurrentTab();
+    }
+
+    function renderCurrentTab() {
+      const container = document.getElementById('mainContent');
+      switch (currentTab) {
+        case 'overview': container.innerHTML = renderOverviewHTML(); break;
+        case 'best': container.innerHTML = renderBestAwardsHTML(); break;
+        case 'toDirector': container.innerHTML = renderToDirectorHTML(); break;
+        case 'fromDirector': container.innerHTML = renderFromDirectorHTML(); break;
+        case 'toSeokwoo': container.innerHTML = renderToSeokwooHTML(); break;
+        case 'table': container.innerHTML = renderTableSearchHTML(); break;
+      }
+    }
+
+    // =====================================================================
+    // [TAB 1] 한눈에 보기 (전체 대시보드)
+    // =====================================================================
+    function renderOverviewHTML() {
+      const stats = getBestStaffStats();
+      const total = surveyData.length || 1;
+      const directorRow = surveyData.find(d => d.author === '이상훈') || { fromDirector: '니네들은 역시 최고야!!' };
+
+      const barsHTML = stats.map((item, idx) => {
+        const isTop = item.name === '이석우';
+        const effectiveVotes = isTop && surveyData.some(d => d.bestStaff === '모두 다~!!') ? item.directVotes + 1 : item.directVotes;
+        const pct = ((effectiveVotes / total) * 100).toFixed(1);
+        const voterBadges = item.voters.map(v => `<span class="px-2 py-0.5 rounded-md bg-white/10 text-[11px] text-slate-200 font-medium">${escapeHTML(v)}</span>`).join('');
+
+        return `
+          <div class="p-3.5 rounded-2xl ${isTop ? 'bg-amber-400/10 border border-amber-300/35' : 'bg-slate-900/60 border border-white/5'} space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-base">${isTop ? '👑' : idx === 1 ? '🌟' : '🏅'}</span>
+                <span class="font-extrabold ${isTop ? 'text-amber-300 text-base sm:text-lg' : 'text-white text-sm sm:text-base'}">${escapeHTML(item.name)}</span>
+                ${isTop ? '<span class="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black">압도적 1위</span>' : ''}
+              </div>
+              <div class="text-xs sm:text-sm font-mono font-bold ${isTop ? 'text-amber-300' : 'text-slate-300'}">
+                ${isTop ? `단독 6표 + 모두 다 1표 = 총 ${effectiveVotes}표 (${pct}%)` : `${item.directVotes}표 (${((item.directVotes / total) * 100).toFixed(1)}%)`}
+              </div>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-950 overflow-hidden">
+              <div class="h-full rounded-full ${isTop ? 'bg-gradient-to-r from-amber-300 via-amber-400 to-rose-400' : 'bg-gradient-to-r from-slate-500 to-amber-400/70'}" style="width: ${Math.min(100, Math.max(10, pct))}%"></div>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+              <span class="text-[11px] text-slate-400 mr-1">투표자:</span>
+              ${voterBadges}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <!-- 실장님 스페셜 한마디 하이라이트 배너 -->
+        <div onclick="switchTab('fromDirector')" class="glass-card rounded-3xl p-6 sm:p-8 border-2 border-amber-300/45 bg-gradient-to-r from-amber-500/15 via-[#1c223e] to-rose-500/15 cursor-pointer relative overflow-hidden">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div class="space-y-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-200 text-xs font-extrabold">
+                <span>🎙️</span>
+                <span>이상훈 실장님이 전략사업실 직원들에게</span>
+              </div>
+              <h2 class="text-2xl sm:text-4xl font-serif font-black text-gold-gradient tracking-tight">
+                “${escapeHTML(directorRow.fromDirector || '니네들은 역시 최고야!!')}”
+              </h2>
+              <p class="text-slate-300 text-sm sm:text-base">
+                ${escapeHTML(directorExtra.subNote)}
+              </p>
+            </div>
+            <div class="shrink-0">
+              <span class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-400/20 border border-amber-300/40 text-amber-200 text-xs sm:text-sm font-bold">
+                <span>스포트라이트 보기</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2단 메인 대시보드 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- 좌측 6컬럼: 베스트 직원 투표 결과 시각화 -->
+          <div class="lg:col-span-6 glass-card rounded-3xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                <span>👑</span>
+                <span>2026 베스트 직원 투표 현황</span>
+              </h3>
+              <button onclick="switchTab('best')" class="text-xs font-bold text-amber-300 hover:underline">어워즈 상세 →</button>
+            </div>
+            <div class="space-y-3">
+              ${barsHTML}
+            </div>
+          </div>
+
+          <!-- 우측 6컬럼: 주요 메시지 프리뷰 -->
+          <div class="lg:col-span-6 space-y-6">
+            <!-- 실장님께 전하는 한마디 프리뷰 -->
+            <div class="glass-card rounded-3xl p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-black text-white flex items-center gap-2">
+                  <span>💌</span>
+                  <span>실장님께 전하는 한마디 (하이라이트)</span>
+                </h3>
+                <button onclick="switchTab('toDirector')" class="text-xs font-bold text-amber-300 hover:underline">전체 11개 보기 →</button>
+              </div>
+              <div class="space-y-3">
+                ${[surveyData[4], surveyData[7], surveyData[10]].filter(Boolean).map((item) => {
+                  const realIdx = surveyData.findIndex(d => d.id === item.id);
+                  return `
+                    <div onclick="openSpotlight('toDirector', ${item.id})" class="p-4 rounded-2xl bg-slate-900/75 hover:bg-slate-800/90 border border-white/10 cursor-pointer transition">
+                      <p class="text-sm text-slate-200 line-clamp-2 leading-relaxed mb-2">"${escapeHTML(item.toDirector)}"</p>
+                      <div class="flex items-center justify-between text-xs text-amber-300 font-bold">
+                        <span>From. ${escapeHTML(getDisplayAuthor(item, realIdx))}</span>
+                        <span class="text-slate-400 font-normal">클릭하여 전문 읽기 ↗</span>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- 석우 대리에게 전하는 롤링페이퍼 프리뷰 -->
+            <div class="glass-card rounded-3xl p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-black text-white flex items-center gap-2">
+                  <span>💐</span>
+                  <span>수고한 석우 대리에게 (롤링페이퍼)</span>
+                </h3>
+                <button onclick="switchTab('toSeokwoo')" class="text-xs font-bold text-rose-300 hover:underline">전체 11개 보기 →</button>
+              </div>
+              <div class="space-y-3">
+                ${[surveyData[2], surveyData[3], surveyData[9]].filter(Boolean).map((item) => {
+                  const realIdx = surveyData.findIndex(d => d.id === item.id);
+                  return `
+                    <div onclick="openSpotlight('toSeokwoo', ${item.id})" class="p-4 rounded-2xl bg-gradient-to-r from-rose-950/40 to-slate-900/80 hover:from-rose-900/50 border border-rose-300/20 cursor-pointer transition">
+                      <p class="text-sm text-slate-200 line-clamp-2 leading-relaxed mb-2">"${escapeHTML(item.toSeokwoo)}"</p>
+                      <div class="flex items-center justify-between text-xs text-rose-200 font-bold">
+                        <span>From. ${escapeHTML(getDisplayAuthor(item, realIdx))}</span>
+                        <span class="text-slate-400 font-normal">클릭하여 전문 읽기 ↗</span>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // =====================================================================
+    // [TAB 2] 2026 베스트 직원 어워즈
+    // =====================================================================
+    function renderBestAwardsHTML() {
+      const stats = getBestStaffStats();
+      const topWinner = stats[0] || { name: '이석우', directVotes: 6, voters: [] };
+      const others = stats.slice(1);
+
+      return `
+        <!-- 1위 명예의 전당 왕관 카드 -->
+        <div class="glass-card rounded-3xl p-8 sm:p-12 border-2 border-amber-300/60 bg-gradient-to-b from-amber-400/20 via-[#19203c] to-[#121629] text-center max-w-4xl mx-auto relative overflow-hidden">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400 text-slate-950 text-xs sm:text-sm font-black mb-4 shadow-lg">
+            <span>👑 HALL OF FAME • 2026 BEST MVP</span>
+          </div>
+
+          <div class="text-5xl sm:text-6xl mb-3 animate-float">🏆</div>
+
+          <h2 class="text-3xl sm:text-5xl font-black text-gold-gradient mb-2">
+            ${escapeHTML(topWinner.name)} 대리
+          </h2>
+          <p class="text-amber-200 text-base sm:text-xl font-extrabold mb-6">
+            단독 6표 + 실장님의 '모두 다~!!' 1표 = 총 7표 득표! (63.6%)
+          </p>
+
+          <div class="max-w-2xl mx-auto p-5 rounded-2xl bg-black/35 border border-amber-300/25 mb-6">
+            <div class="text-xs text-amber-300 font-bold mb-2.5">✨ 소중한 한 표를 보낸 전략사업실 식구들</div>
+            <div class="flex flex-wrap items-center justify-center gap-2">
+              ${topWinner.voters.map(v => `<span class="px-3.5 py-1.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-100 text-xs sm:text-sm font-bold">💖 ${escapeHTML(v)}</span>`).join('')}
+              ${surveyData.some(d => d.bestStaff === '모두 다~!!') ? `<span class="px-3.5 py-1.5 rounded-full bg-rose-500/25 border border-rose-300/40 text-rose-100 text-xs sm:text-sm font-bold">🌟 이상훈 실장님 (모두 다~!!)</span>` : ''}
+            </div>
+          </div>
+
+          <button onclick="triggerCelebration()" class="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 hover:from-amber-200 hover:to-amber-400 text-slate-950 font-black text-sm sm:text-base shadow-xl shadow-amber-500/25 transition active:scale-95">
+            🎉 이석우 대리님 수상 축하 폭죽 터뜨리기!
+          </button>
+        </div>
+
+        <!-- 그 외 득표자 카드 그리드 -->
+        <div class="space-y-4 pt-2">
+          <h3 class="text-lg sm:text-xl font-black text-amber-200 flex items-center gap-2">
+            <span>🌟</span>
+            <span>함께 빛난 2026 전략사업실 후보 & 득표 현황</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            ${others.map(person => `
+              <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="px-3 py-1 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-200 text-xs font-extrabold">
+                      ${person.name === '모두 다~!!' ? '🌈 실장님 특별상' : '🏅 베스트 후보'}
+                    </span>
+                    <span class="text-sm font-black text-amber-300">${person.directVotes}표</span>
+                  </div>
+                  <h4 class="text-2xl font-black text-white mb-2">${escapeHTML(person.name)}</h4>
+                </div>
+                <div class="pt-3 border-t border-white/10 text-xs text-slate-300">
+                  <span class="text-slate-400">추천인: </span>
+                  <strong class="text-amber-200">${escapeHTML(person.voters.join(', '))}</strong>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // =====================================================================
+    // [TAB 3] 실장님께 하고 싶은 말 (소감)
+    // =====================================================================
+    function renderToDirectorHTML() {
+      return `
+        <!-- 질문 원문 & 비밀보장(익명) 토글 헤더 -->
+        <div class="glass-card rounded-3xl p-6 border-amber-300/30 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div class="space-y-1.5">
+            <span class="inline-block px-3 py-0.5 rounded-full bg-amber-400/20 text-amber-200 text-xs font-bold">설문 문항 #3</span>
+            <h2 class="text-lg sm:text-2xl font-black text-gold-gradient">
+              "2026년 전략사업실과 함께 한 소감 말하기, 2026년 전략사업실 운영에 수고하신 실장님께 한마디 남겨주세요!! (비밀보장..ㅋ)"
+            </h2>
+          </div>
+          <button onclick="toggleAnonymousMode()" class="shrink-0 px-5 py-3 rounded-2xl ${isAnonymous ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-amber-200 border border-amber-300/35'} font-extrabold text-xs sm:text-sm flex items-center gap-2 transition shadow-lg">
+            <span>${isAnonymous ? '🙈' : '🕵️'}</span>
+            <span>${isAnonymous ? '비밀보장(익명) ON → 실명 보기' : '비밀보장(익명) 모드로 가리기'}</span>
+          </button>
+        </div>
+
+        <!-- 11명 소감 카드 그리드 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          ${surveyData.map((item, idx) => `
+            <div onclick="openSpotlight('toDirector', ${item.id})" class="glass-card rounded-2xl p-6 cursor-pointer flex flex-col justify-between group">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-3">
+                  <span class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                    <span>To. 이상훈 실장님</span>
+                  </span>
+                  <span class="text-[11px] text-slate-400 group-hover:text-amber-200 transition">확대 ↗</span>
+                </div>
+                <p class="text-slate-100 text-base leading-relaxed whitespace-pre-line font-normal">
+                  ${escapeHTML(item.toDirector)}
+                </p>
+              </div>
+              <div class="mt-5 pt-3.5 border-t border-white/10 flex items-center justify-between">
+                <span class="text-sm font-extrabold ${isAnonymous ? 'text-rose-300' : 'text-amber-200'}">
+                  From. ${escapeHTML(getDisplayAuthor(item, idx))}
+                </span>
+                <button onclick="event.stopPropagation(); addClap(${item.id})" class="px-3 py-1 rounded-full bg-white/10 hover:bg-amber-400/25 text-amber-200 text-xs font-bold transition">
+                  👏 ${item.claps || 0}
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // =====================================================================
+    // [TAB 4] 실장님이 직원들에게
+    // =====================================================================
+    function renderFromDirectorHTML() {
+      const directorItem = surveyData.find(d => d.author === '이상훈') || { fromDirector: '니네들은 역시 최고야!!' };
+      const parkItem = surveyData.find(d => d.author === '박용수');
+
+      return `
+        <div class="max-w-4xl mx-auto py-2 space-y-6">
+          <div class="glass-card rounded-3xl p-8 sm:p-14 border-2 border-amber-300/50 bg-gradient-to-br from-[#23294a] via-[#171b33] to-[#321223] text-center relative overflow-hidden shadow-2xl">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-200 text-xs sm:text-sm font-extrabold mb-6">
+              <span>🎙️ 설문 문항 #4 · 실장님은 직원들에게 한마디 남겨주세요!!</span>
+            </div>
+
+            <div class="text-5xl mb-4 animate-float">🥂</div>
+
+            <h2 class="text-3xl sm:text-5xl lg:text-6xl font-serif font-black text-gold-gradient leading-tight my-6">
+              “${escapeHTML(directorItem.fromDirector || '니네들은 역시 최고야!!')}”
+            </h2>
+
+            <div class="max-w-2xl mx-auto p-6 rounded-2xl bg-black/35 border border-white/10 text-slate-200 text-base sm:text-lg leading-relaxed whitespace-pre-line mb-8">
+              ${escapeHTML(directorExtra.subNote)}
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <button onclick="triggerCelebration()" class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-sm sm:text-base shadow-lg transition active:scale-95">
+                🎉 실장님 말씀에 건배 & 축포!
+              </button>
+              <button onclick="openDataModal('director')" class="px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-amber-100 font-bold text-sm flex items-center gap-2 transition">
+                <i class="fa-solid fa-pen"></i>
+                <span>현장 말씀 수정/추가하기</span>
+              </button>
+            </div>
+          </div>
+
+          ${parkItem && parkItem.fromDirector ? `
+            <div class="glass-card rounded-2xl p-5 max-w-xl mx-auto flex items-center justify-between text-xs sm:text-sm text-slate-300">
+              <span>📌 기타 응답 기록 (${escapeHTML(getDisplayAuthor(parkItem, 3))})</span>
+              <span class="font-mono text-amber-200 font-bold">"${escapeHTML(parkItem.fromDirector)}"</span>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    // =====================================================================
+    // [TAB 5] 수고한 석우 대리에게 (롤링페이퍼)
+    // =====================================================================
+    function renderToSeokwooHTML() {
+      const badges = [
+        '💙 다회용기의 푸른 피',
+        '🌟 최고의 파트너',
+        '🍀 꽃길만 걸으세요',
+        '😊 항상 너털웃음 대리님',
+        '💐 그동안 감사했습니다',
+        '🔥 책임감 최고',
+        '📞 안성 연락 필수!',
+        '🎉 새로운 출발 응원'
+      ];
+
+      return `
+        <!-- 헌정 배너 -->
+        <div class="glass-card rounded-3xl p-7 sm:p-10 border-2 border-rose-300/35 bg-gradient-to-r from-rose-950/45 via-[#181e38] to-amber-950/35 text-center space-y-3">
+          <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-rose-500/20 border border-rose-300/40 text-rose-200 text-xs sm:text-sm font-extrabold">
+            <span>💐 SPECIAL TRIBUTE ROLLING PAPER</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-black text-gold-gradient">
+            그 동안 수고한 석우 대리에게 한마디 남겨주세요!!
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto">
+            다회용기의 푸른 피이자 전략사업실의 든든한 버팀목이었던 <strong>이석우 대리님</strong>! <br class="hidden sm:inline">
+            실장님과 팀원 11명이 진심을 꾹꾹 눌러 담은 롤링페이퍼입니다. 카드를 클릭하면 큰 화면으로 낭독할 수 있습니다.
+          </p>
+        </div>
+
+        <!-- 11명 롤링페이퍼 카드 월 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          ${surveyData.map((item, idx) => {
+            const isDirector = item.author === '이상훈';
+            const isSelf = item.author === '이석우';
+            const badge = isDirector ? '🎙️ 실장님의 당부' : isSelf ? '😎 석우 대리 본인' : badges[idx % badges.length];
+            return `
+              <div onclick="openSpotlight('toSeokwoo', ${item.id})" class="glass-card rounded-2xl p-6 cursor-pointer flex flex-col justify-between ${isDirector ? 'border-amber-300/50 bg-amber-500/10' : 'border-rose-300/20 hover:border-rose-300/55'}">
+                <div>
+                  <div class="flex items-center justify-between gap-2 mb-3">
+                    <span class="px-3 py-1 rounded-full ${isDirector ? 'bg-amber-400/25 text-amber-200' : 'bg-rose-500/20 text-rose-200'} text-xs font-extrabold">
+                      ${badge}
+                    </span>
+                    <span class="text-xs text-slate-400">확대 ↗</span>
+                  </div>
+                  <p class="text-slate-100 text-base leading-relaxed whitespace-pre-line">
+                    ${escapeHTML(item.toSeokwoo)}
+                  </p>
+                </div>
+                <div class="mt-5 pt-3.5 border-t border-white/10 flex items-center justify-between">
+                  <span class="text-sm font-extrabold ${isDirector ? 'text-amber-300' : 'text-rose-200'}">
+                    From. ${escapeHTML(getDisplayAuthor(item, idx))}
+                  </span>
+                  <button onclick="event.stopPropagation(); addClap(${item.id})" class="px-3 py-1 rounded-full bg-rose-500/20 hover:bg-rose-500/35 text-rose-200 text-xs font-bold transition">
+                    💐 ${item.claps || 0}
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    // =====================================================================
+    // [TAB 6] 전체 응답 테이블 / 검색
+    // =====================================================================
+    function renderTableSearchHTML() {
+      const uniquePicks = ['ALL', ...new Set(surveyData.map(d => d.bestStaff).filter(Boolean))];
+
+      const filtered = surveyData.filter((item, idx) => {
+        const displayAuthor = getDisplayAuthor(item, idx).toLowerCase();
+        const q = searchQuery.toLowerCase();
+        const matchText =
+          displayAuthor.includes(q) ||
+          (item.bestStaff || '').toLowerCase().includes(q) ||
+          (item.toDirector || '').toLowerCase().includes(q) ||
+          (item.fromDirector || '').toLowerCase().includes(q) ||
+          (item.toSeokwoo || '').toLowerCase().includes(q);
+        const matchPick = filterBestStaff === 'ALL' || item.bestStaff === filterBestStaff;
+        return matchText && matchPick;
+      });
+
+      return `
+        <div class="glass-card rounded-3xl p-6 space-y-5">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-gold-gradient">📋 설문조사 전체 응답 한눈에 비교</h2>
+              <p class="text-xs sm:text-sm text-slate-400 mt-0.5">총 ${surveyData.length}명의 원본 설문 내역을 검색하거나 베스트 직원 추천별로 필터링할 수 있습니다.</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+              <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" value="${escapeHTML(searchQuery)}" oninput="searchQuery=this.value; renderCurrentTab();" placeholder="이름 또는 내용 검색..." class="pl-9 pr-4 py-2 rounded-xl bg-slate-900 border border-white/15 text-white text-xs sm:text-sm focus:border-amber-400 focus:outline-none" />
+              </div>
+
+              <select onchange="filterBestStaff=this.value; renderCurrentTab();" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-white/15 text-amber-200 text-xs sm:text-sm font-bold focus:border-amber-400 focus:outline-none">
+                ${uniquePicks.map(p => `<option value="${escapeHTML(p)}" ${filterBestStaff === p ? 'selected' : ''}>${p === 'ALL' ? '👑 베스트 추천: 전체' : `Pick: ${escapeHTML(p)}`}</option>`).join('')}
+              </select>
+
+              <button onclick="openDataModal('single')" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 text-xs sm:text-sm font-extrabold">
+                + 새 응답 추가
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl border border-white/10">
+            <table class="w-full text-left border-collapse min-w-[900px]">
+              <thead>
+                <tr class="bg-slate-900/95 text-amber-200 text-xs font-extrabold border-b border-amber-200/20">
+                  <th class="p-3.5 w-28">1. 작성자</th>
+                  <th class="p-3.5 w-32">2. 베스트 직원</th>
+                  <th class="p-3.5 w-1/3">3. 실장님께 하고 싶은 말</th>
+                  <th class="p-3.5 w-44">4. 실장님의 한마디</th>
+                  <th class="p-3.5 w-1/3">5. 석우 대리에게 하고 싶은 말</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/10 text-xs sm:text-sm">
+                ${filtered.map((item) => {
+                  const realIdx = surveyData.findIndex(d => d.id === item.id);
+                  return `
+                    <tr class="hover:bg-white/5 transition align-top">
+                      <td class="p-3.5 font-extrabold text-amber-200 whitespace-nowrap">${escapeHTML(getDisplayAuthor(item, realIdx))}</td>
+                      <td class="p-3.5">
+                        <span class="px-2.5 py-1 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-200 text-xs font-bold whitespace-nowrap">
+                          ${escapeHTML(item.bestStaff)}
+                        </span>
+                      </td>
+                      <td onclick="openSpotlight('toDirector', ${item.id})" class="p-3.5 text-slate-200 leading-relaxed cursor-pointer hover:text-amber-100">${escapeHTML(item.toDirector)}</td>
+                      <td class="p-3.5 font-bold ${item.fromDirector && item.fromDirector !== '-' ? 'text-amber-300' : 'text-slate-500'}">${escapeHTML(item.fromDirector || '(공란)')}</td>
+                      <td onclick="openSpotlight('toSeokwoo', ${item.id})" class="p-3.5 text-slate-200 leading-relaxed cursor-pointer hover:text-rose-100">${escapeHTML(item.toSeokwoo)}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    // =====================================================================
+    // 스포트라이트 상세 모달 & 박수 인터랙션
+    // =====================================================================
+    function addClap(id) {
+      const target = surveyData.find(d => d.id === id);
+      if (target) {
+        target.claps = (target.claps || 0) + 1;
+        saveState();
+        renderCurrentTab();
+        if (currentSpotlight && currentSpotlight.id === id) {
+          document.getElementById('spotlightClapCount').textContent = target.claps;
+        }
+      }
+    }
+
+    function openSpotlight(category, id) {
+      const idx = surveyData.findIndex(d => d.id === id);
+      const item = surveyData[idx];
+      if (!item) return;
+      currentSpotlight = item;
+
+      const badgeEl = document.getElementById('spotlightBadge');
+      const titleEl = document.getElementById('spotlightTitle');
+      const bodyEl = document.getElementById('spotlightBody');
+      const authorEl = document.getElementById('spotlightAuthor');
+      const clapEl = document.getElementById('spotlightClapCount');
+
+      if (category === 'toDirector') {
+        badgeEl.textContent = '💌 실장님께 하고 싶은 말';
+        titleEl.textContent = '2026 전략사업실 소감 & 실장님께 한마디';
+        bodyEl.textContent = item.toDirector;
+      } else if (category === 'toSeokwoo') {
+        badgeEl.textContent = '💐 수고한 석우 대리에게';
+        titleEl.textContent = '그동안 수고한 석우 대리에게 전하는 메시지';
+        bodyEl.textContent = item.toSeokwoo;
+      }
+
+      authorEl.textContent = getDisplayAuthor(item, idx);
+      clapEl.textContent = item.claps || 0;
+
+      const modal = document.getElementById('spotlightModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeSpotlight() {
+      const modal = document.getElementById('spotlightModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      currentSpotlight = null;
+    }
+
+    function clapFromSpotlight() {
+      if (currentSpotlight) {
+        addClap(currentSpotlight.id);
+        confetti({ particleCount: 30, spread: 55, origin: { y: 0.7 } });
+      }
+    }
+
+    // =====================================================================
+    // 회식 발표 모드 (순서: 1. 베스트 직원 -> 2. 실장님 말씀 -> 3. 실장님께 한마디 -> 4. 석우대리 롤링페이퍼)
+    // =====================================================================
+    function buildPresentationSlides() {
+      const list = [];
+      const directorItem = surveyData.find(d => d.author === '이상훈') || { fromDirector: '니네들은 역시 최고야!!' };
+
+      // 1. 베스트 직원 발표
+      list.push({
+        step: 'STEP 1 · 2026 베스트 직원 어워즈',
+        title: '👑 2026 전략사업실 베스트 직원 1위\n“이석우 대리님” (총 7표 득표!)',
+        body: '단독 6표 (이주영, 이석우, 김진현, 이빛나, 임수아, 이영서)\n+ 이상훈 실장님의 “모두 다~!!” 1표 포함 총 7표!\n\n전략사업실 식구들이 뽑은 올해 최고의 동료, 진심으로 축하합니다! 🎉',
+        footer: '2026 경기도주식회사 전략사업실 어워즈'
+      });
+
+      // 2. 실장님 말씀
+      list.push({
+        step: 'STEP 2 · 실장님이 직원들에게',
+        title: `🎙️ “${directorItem.fromDirector || '니네들은 역시 최고야!!'}”`,
+        body: directorExtra.subNote,
+        footer: '- 이상훈 실장님 -'
+      });
+
+      // 3. 팀원들의 실장님께 한마디
+      surveyData.forEach((item, idx) => {
+        list.push({
+          step: `STEP 3 · 실장님께 하고 싶은 말 (${idx + 1}/${surveyData.length})`,
+          title: `💌 From. ${getDisplayAuthor(item, idx)}`,
+          body: item.toDirector,
+          footer: `베스트 직원 추천: ${item.bestStaff}`
+        });
+      });
+
+      // 4. 석우 대리 롤링페이퍼
+      surveyData.forEach((item, idx) => {
+        list.push({
+          step: `STEP 4 · 수고한 석우 대리에게 (${idx + 1}/${surveyData.length})`,
+          title: `💐 From. ${getDisplayAuthor(item, idx)}`,
+          body: item.toSeokwoo,
+          footer: '그동안 정말 수고 많으셨습니다, 이석우 대리님!'
+        });
+      });
+
+      return list;
+    }
+
+    function openSlideShow() {
+      slides = buildPresentationSlides();
+      currentSlideIdx = 0;
+      renderSlide();
+      const modal = document.getElementById('slideShowModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeSlideShow() {
+      const modal = document.getElementById('slideShowModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function renderSlide() {
+      slides = buildPresentationSlides();
+      const s = slides[currentSlideIdx];
+      document.getElementById('slideCounter').textContent = `${currentSlideIdx + 1} / ${slides.length}`;
+      document.getElementById('slideStage').innerHTML = `
+        <div class="glass-card rounded-3xl p-7 sm:p-12 border-2 border-amber-300/45 text-center space-y-6 shadow-2xl">
+          <div class="inline-block px-4 py-1.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-200 text-xs sm:text-sm font-black">
+            ${escapeHTML(s.step)}
+          </div>
+          <h2 class="text-2xl sm:text-4xl lg:text-5xl font-black text-gold-gradient whitespace-pre-line leading-tight">
+            ${escapeHTML(s.title)}
+          </h2>
+          <div class="p-6 sm:p-8 rounded-2xl bg-black/40 border border-white/10 text-left max-h-[46vh] overflow-y-auto">
+            <p class="text-lg sm:text-2xl lg:text-[1.65rem] text-slate-100 whitespace-pre-line leading-relaxed font-medium">
+              ${escapeHTML(s.body)}
+            </p>
+          </div>
+          <div class="text-sm sm:text-lg font-extrabold text-amber-200/90">
+            ${escapeHTML(s.footer)}
+          </div>
+        </div>
+      `;
+    }
+
+    function nextSlide() {
+      currentSlideIdx = (currentSlideIdx + 1) % slides.length;
+      renderSlide();
+    }
+
+    function prevSlide() {
+      currentSlideIdx = (currentSlideIdx - 1 + slides.length) % slides.length;
+      renderSlide();
+    }
+
+    // 키보드 단축키
+    document.addEventListener('keydown', (e) => {
+      const slideModal = document.getElementById('slideShowModal');
+      if (!slideModal.classList.contains('hidden')) {
+        if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'Escape') closeSlideShow();
+      } else if (!document.getElementById('spotlightModal').classList.contains('hidden')) {
+        if (e.key === 'Escape') closeSpotlight();
+      }
+    });
+
+    // =====================================================================
+    // 데이터 수정 / 추가 모달
+    // =====================================================================
+    function openDataModal(tab = 'director') {
+      const modal = document.getElementById('dataModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      const directorItem = surveyData.find(d => d.author === '이상훈');
+      document.getElementById('editDirectorQuote').value = directorItem ? directorItem.fromDirector : '니네들은 역시 최고야!!';
+      document.getElementById('editDirectorSubNote').value = directorExtra.subNote || '';
+      document.getElementById('modalItemCount').textContent = surveyData.length;
+
+      renderManageList();
+      switchModalTab(tab);
+    }
+
+    function closeDataModal() {
+      const modal = document.getElementById('dataModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function switchModalTab(tab) {
+      ['director', 'single', 'list'].forEach(t => {
+        const btn = document.getElementById(`mTab-${t}`);
+        if (t === tab) {
+          btn.classList.add('bg-amber-400', 'text-slate-950');
+          btn.classList.remove('text-slate-300', 'hover:bg-white/5');
+        } else {
+          btn.classList.remove('bg-amber-400', 'text-slate-950');
+          btn.classList.add('text-slate-300', 'hover:bg-white/5');
+        }
+      });
+      document.getElementById('directorEditPanel').classList.toggle('hidden', tab !== 'director');
+      document.getElementById('singleEntryForm').classList.toggle('hidden', tab !== 'single');
+      document.getElementById('listManagePanel').classList.toggle('hidden', tab !== 'list');
+    }
+
+    function saveDirectorSpecial() {
+      const quote = document.getElementById('editDirectorQuote').value.trim();
+      const sub = document.getElementById('editDirectorSubNote').value.trim();
+      const directorItem = surveyData.find(d => d.author === '이상훈');
+      if (directorItem) {
+        directorItem.fromDirector = quote;
+      }
+      directorExtra.subNote = sub;
+      saveState();
+      renderCurrentTab();
+      showToast('🎙️ 실장님 한마디가 업데이트되었습니다!');
+      closeDataModal();
+    }
+
+    function handleAddSingleEntry(e) {
+      e.preventDefault();
+      const author = document.getElementById('inputAuthor').value.trim();
+      const bestStaff = document.getElementById('inputBestStaff').value.trim();
+      const toDirector = document.getElementById('inputToDirector').value.trim();
+      const fromDirector = document.getElementById('inputFromDirector').value.trim();
+      const toSeokwoo = document.getElementById('inputToSeokwoo').value.trim();
+
+      surveyData.push({
+        id: Date.now(),
+        author,
+        bestStaff,
+        toDirector,
+        fromDirector,
+        toSeokwoo,
+        claps: 1
+      });
+
+      saveState();
+      e.target.reset();
+      renderCurrentTab();
+      showToast(`✅ ${author}님의 응답이 추가되었습니다.`);
+      closeDataModal();
+    }
+
+    function renderManageList() {
+      const container = document.getElementById('manageListContainer');
+      container.innerHTML = surveyData.map(item => `
+        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-white/10 flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <div class="text-sm font-extrabold text-amber-200 flex items-center gap-2">
+              <span>${escapeHTML(item.author)}</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-white/10 text-slate-200 font-normal">Pick: ${escapeHTML(item.bestStaff)}</span>
+            </div>
+            <p class="text-xs text-slate-400 truncate mt-0.5">${escapeHTML(item.toDirector)}</p>
+          </div>
+          <button onclick="deleteEntry(${item.id})" class="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/35 text-rose-200 text-xs font-bold shrink-0">
+            삭제
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function deleteEntry(id) {
+      surveyData = surveyData.filter(d => d.id !== id);
+      saveState();
+      document.getElementById('modalItemCount').textContent = surveyData.length;
+      renderManageList();
+      renderCurrentTab();
+      showToast('응답이 삭제되었습니다.');
+    }
+
+    function resetToOriginalSurvey() {
+      surveyData = JSON.parse(JSON.stringify(INITIAL_SURVEY_DATA));
+      directorExtra = JSON.parse(JSON.stringify(INITIAL_DIRECTOR_EXTRA));
+      saveState();
+      document.getElementById('modalItemCount').textContent = surveyData.length;
+      renderManageList();
+      renderCurrentTab();
+      showToast('🔄 첨부된 11명 원본 설문 데이터로 복원되었습니다!');
+    }
+
+    // =====================================================================
+    // 유틸리티 & 파티클 / 축포 이펙트
+    // =====================================================================
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function showToast(msg) {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      el.className = 'px-4 py-3 rounded-xl bg-slate-900/95 border border-amber-300/45 text-amber-100 text-xs sm:text-sm font-bold shadow-2xl transition-all duration-300';
+      el.textContent = msg;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+        setTimeout(() => el.remove(), 300);
+      }, 2800);
+    }
+
+    function triggerCelebration() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 90,
+          spread: 75,
+          origin: { y: 0.6 },
+          colors: ['#F3D078', '#D4AF37', '#FF6B6B', '#FFF7D6']
+        });
+      }
+    }
+
+    function initSparkleCanvas() {
+      const canvas = document.getElementById('sparkleCanvas');
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const particles = Array.from({ length: 48 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 2 + 0.6,
+        vy: -(Math.random() * 0.25 + 0.08),
+        vx: (Math.random() - 0.5) * 0.15,
+        alpha: Math.random() * 0.6 + 0.15
+      }));
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.y < -10) p.y = height + 10;
+          if (p.x < -10) p.x = width + 10;
+          if (p.x > width + 10) p.x = -10;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(243, 208, 120, ${p.alpha})`;
+          ctx.fill();
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      updateTopKPIs();
+      switchTab('overview');
+      initSparkleCanvas();
+    });
+  </script>
+</body>
+</html>
